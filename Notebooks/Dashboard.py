@@ -1,153 +1,108 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 2,
-   "id": "6fd211d3",
-   "metadata": {},
-   "outputs": [
-    {
-     "ename": "ModuleNotFoundError",
-     "evalue": "No module named 'streamlit'",
-     "output_type": "error",
-     "traceback": [
-      "\u001b[31m---------------------------------------------------------------------------\u001b[39m",
-      "\u001b[31mModuleNotFoundError\u001b[39m                       Traceback (most recent call last)",
-      "\u001b[36mCell\u001b[39m\u001b[36m \u001b[39m\u001b[32mIn[2]\u001b[39m\u001b[32m, line 1\u001b[39m\n\u001b[32m----> \u001b[39m\u001b[32m1\u001b[39m \u001b[38;5;28;01mimport\u001b[39;00m streamlit \u001b[38;5;28;01mas\u001b[39;00m st\n\u001b[32m      2\u001b[39m \u001b[38;5;28;01mimport\u001b[39;00m pandas \u001b[38;5;28;01mas\u001b[39;00m pd\n\u001b[32m      3\u001b[39m \u001b[38;5;28;01mimport\u001b[39;00m numpy \u001b[38;5;28;01mas\u001b[39;00m np\n\u001b[32m      4\u001b[39m \u001b[38;5;28;01mimport\u001b[39;00m plotly.express \u001b[38;5;28;01mas\u001b[39;00m px\n",
-      "\u001b[31mModuleNotFoundError\u001b[39m: No module named 'streamlit'"
-     ]
-    }
-   ],
-   "source": [
-    "import streamlit as st\n",
-    "import pandas as pd\n",
-    "import numpy as np\n",
-    "import plotly.express as px\n",
-    "\n",
-    "df=pd.read_excel(r\"C:\\Users\\class\\OneDrive\\Documents\\Movie Rating Analysis\\Data\\Cleaned\\final_netflix_dataset.xlsx\")\n",
-    "\n",
-    "#Page Setup\n",
-    "st.set_page_config(page_title=\"Netflix Movie Rating Analysis\", page_icon=\":bar_chart:\", layout=\"wide\")\n",
-    "# Custom Theme Styling\n",
-    "st.markdown(\"\"\"\n",
-    "<style>\n",
-    "@import url('https://fonts.googleapis.com/css2?family=Baloo+2&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&display=swap');\n",
-    "\n",
-    "html, body, [class*=\"css\"] {\n",
-    "    font-family: 'Inter', sans-serif;\n",
-    "    background-color: #1B1F3B;  /* dark navy background */\n",
-    "    color: #F5F5F5;             /* off-white text */\n",
-    "}\n",
-    "\n",
-    "h1, h2, h3 {\n",
-    "    font-family: 'Baloo 2', cursive;\n",
-    "    color: #FFB6C1;             /* pastel pink titles */\n",
-    "}\n",
-    "\n",
-    "[data-testid=\"stMetricValue\"] {\n",
-    "    font-family: 'JetBrains Mono', monospace;\n",
-    "    color: #98FF98;             /* mint green KPI values */\n",
-    "    font-size: 1.5rem;\n",
-    "}\n",
-    "\n",
-    "[data-testid=\"stSidebar\"] {\n",
-    "    background-color: #0F1126;  /* sidebar dark background */\n",
-    "    color: #C8A2C8;             /* lilac accents */\n",
-    "}\n",
-    "</style>\n",
-    "\"\"\", unsafe_allow_html=True)\n",
-    "\n",
-    "\n",
-    "#Sidebar Setup\n",
-    "st.sidebar.header(\"Netflix Movie Rating Analysis\")\n",
-    "genre_filter = st.sidebar.multiselect(\"Select Genre\", options=df[\"genre_group\"].unique(), default=df[\"genre_group\"].unique())\n",
-    "age_filter = st.sidebar.multiselect(\"Select Age Group\", options=df[\"age_group\"].unique(), default=df[\"age_group\"].unique())\n",
-    "fdf=df[(df[\"genre_group\"].isin(genre_filter)) & (df[\"age_group\"].isin(age_filter))]\n",
-    "\n",
-    "#Main Page Setup\n",
-    "st.title(\"Netflix Movie Rating Analysis\")\n",
-    "st.write(\"This is a simple dashboard to analyze Netflix movie ratings.\")\n",
-    "st.write(\"You can filter the data by genre and age group using the sidebar.\")\n",
-    "st.write(\"The data is based on a dataset of Netflix movies and their ratings across different age groups and genres.\")\n",
-    "\n",
-    "#KPIs\n",
-    "total_movies = fdf.shape[0]\n",
-    "st.subheader(\"Key Performance Indicators\")\n",
-    "st.metric(\"Total Movies\", total_movies)\n",
-    "st.metric(\"Average Completion Rate\", f\"{fdf['completion_rate'].mean():.2f}%\")\n",
-    "st.metric(\"Average Rating\", f\"{fdf['rating'].mean():.2f}/5\")    \n",
-    "st.metric(\"Average Engagement Score\", f\"{fdf['engagement_score'].mean():.2f}/10\")\n",
-    "\n",
-    "#Charts\n",
-    "#Titles by genre\n",
-    "titles_by_genre = fdf.groupby(\"genre_group\").size()\n",
-    "st.subheader(\"Titles by Genre\")\n",
-    "fig1 = px.bar(titles_by_genre, x=titles_by_genre.index, y=titles_by_genre.values, labels={\"x\": \"Genre\", \"y\": \"Count\"}, title=\"Number of Titles by Genre\")\n",
-    "st.plotly_chart(fig1)\n",
-    "\n",
-    "#Views by age group\n",
-    "views_by_age_group = fdf.groupby(\"age_group\")[\"views\"].sum()\n",
-    "st.subheader(\"Views by Age Group\")\n",
-    "fig2 = px.bar(views_by_age_group, x=views_by_age_group.index, y=views_by_age_group.values, labels={\"x\": \"Age Group\", \"y\": \"Views\"}, title=\"Total Views by Age Group\")\n",
-    "st.plotly_chart(fig2)   \n",
-    "\n",
-    "#Views per genre category\n",
-    "views_by_genre_age = fdf.groupby([\"genre_group\", \"age_group\"])[\"views\"].sum().reset_index()\n",
-    "st.subheader(\"Views by Genre and Age Group\")\n",
-    "fig3 = px.bar(views_by_genre_age, x=\"genre_group\", y=\"views\", color=\"age_group\", labels={\"genre_group\": \"Genre\", \"views\": \"Views\"}, title=\"Views by Genre and Age Group\")\n",
-    "st.plotly_chart(fig3)\n",
-    "\n",
-    "#Engagement Score by Churn Rate\n",
-    "st.write(\"Engagement Score is a proxy for how actively users interact with content while Churn Impact Score measures how much losing those users hurts retention. A higher engagement score indicates that users are more engaged with the content, while a higher churn impact score indicates that losing those users would have a greater negative impact on retention.\")\n",
-    "engagement_by_churn = fdf.groupby(\"churn_impact_score\")[\"engagement_score\"].mean().reset_index()\n",
-    "st.subheader(\"Engagement Score by Churn Impact Score\")  \n",
-    "fig4 = px.line(engagement_by_churn, x=\"churn_impact_score\", y=\"engagement_score\", labels={\"churn_impact_score\": \"Churn Impact Score\", \"engagement_score\": \"Engagement Score\"}, title=\"Engagement Score by Churn Impact Score\")\n",
-    "st.plotly_chart(fig4)\n",
-    "\n",
-    "# Scatter plot of Engagement Score vs Churn Impact Score\n",
-    "st.subheader(\"Engagement Score vs Churn Impact Score\")\n",
-    "st.write(\"This chart shows whether higher engagement reduces churn risk. A downward trend would suggest that more engaged viewers are less likely to churn.\")\n",
-    "\n",
-    "fig5 = px.scatter(\n",
-    "    fdf,\n",
-    "    x=\"engagement_score\",\n",
-    "    y=\"churn_impact_score\",\n",
-    "    color=\"genre_group\",\n",
-    "    opacity=0.6,\n",
-    "    labels={\"engagement_score\": \"Engagement Score\", \"churn_impact_score\": \"Churn Impact Score\"},\n",
-    "    title=\"Engagement vs Churn Impact\"\n",
-    ")\n",
-    "\n",
-    "#Add a trend line\n",
-    "x = fdf[\"engagement_score\"].values\n",
-    "y = fdf[\"churn_impact_score\"].values\n",
-    "if len(x) > 1:\n",
-    "    m, b = np.polyfit(x, y, 1)\n",
-    "    fig5.add_scatter(x=x, y=m*x+b, mode=\"lines\", name=\"Trend\", line=dict(color=\"black\", dash=\"dot\"))\n",
-    "\n",
-    "st.plotly_chart(fig5)\n"
-   ]
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": ".venv",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.14.0"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
+
+df=pd.read_excel("Data/Cleaned/final_netflix_dataset.xlsx")
+
+#Page Setup
+st.set_page_config(page_title="Netflix Movie Rating Analysis", page_icon=":bar_chart:", layout="wide")
+# Custom Theme Styling
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+    background-color: #1B1F3B;  /* dark navy background */
+    color: #F5F5F5;             /* off-white text */
 }
+
+h1, h2, h3 {
+    font-family: 'Baloo 2', cursive;
+    color: #FFB6C1;             /* pastel pink titles */
+}
+
+[data-testid="stMetricValue"] {
+    font-family: 'JetBrains Mono', monospace;
+    color: #98FF98;             /* mint green KPI values */
+    font-size: 1.5rem;
+}
+
+[data-testid="stSidebar"] {
+    background-color: #0F1126;  /* sidebar dark background */
+    color: #C8A2C8;             /* lilac accents */
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+#Sidebar Setup
+st.sidebar.header("Netflix Movie Rating Analysis")
+genre_filter = st.sidebar.multiselect("Select Genre", options=df["genre_group"].unique(), default=df["genre_group"].unique())
+age_filter = st.sidebar.multiselect("Select Age Group", options=df["age_group"].unique(), default=df["age_group"].unique())
+fdf=df[(df["genre_group"].isin(genre_filter)) & (df["age_group"].isin(age_filter))]
+
+#Main Page Setup
+st.title("Netflix Movie Rating Analysis")
+st.write("This is a simple dashboard to analyze Netflix movie ratings.")
+st.write("You can filter the data by genre and age group using the sidebar.")
+st.write("The data is based on a dataset of Netflix movies and their ratings across different age groups and genres.")
+
+#KPIs
+total_movies = fdf.shape[0]
+st.subheader("Key Performance Indicators")
+st.metric("Total Movies", total_movies)
+st.metric("Average Completion Rate", f"{fdf['completion_rate'].mean():.2f}%")
+st.metric("Average Rating", f"{fdf['rating'].mean():.2f}/5")    
+st.metric("Average Engagement Score", f"{fdf['engagement_score'].mean():.2f}/10")
+
+#Charts
+#Titles by genre
+titles_by_genre = fdf.groupby("genre_group").size()
+st.subheader("Titles by Genre")
+fig1 = px.bar(titles_by_genre, x=titles_by_genre.index, y=titles_by_genre.values, labels={"x": "Genre", "y": "Count"}, title="Number of Titles by Genre")
+st.plotly_chart(fig1)
+
+#Views by age group
+views_by_age_group = fdf.groupby("age_group")["views"].sum()
+st.subheader("Views by Age Group")
+fig2 = px.bar(views_by_age_group, x=views_by_age_group.index, y=views_by_age_group.values, labels={"x": "Age Group", "y": "Views"}, title="Total Views by Age Group")
+st.plotly_chart(fig2)   
+
+#Views per genre category
+views_by_genre_age = fdf.groupby(["genre_group", "age_group"])["views"].sum().reset_index()
+st.subheader("Views by Genre and Age Group")
+fig3 = px.bar(views_by_genre_age, x="genre_group", y="views", color="age_group", labels={"genre_group": "Genre", "views": "Views"}, title="Views by Genre and Age Group")
+st.plotly_chart(fig3)
+
+#Engagement Score by Churn Rate
+st.write("Engagement Score is a proxy for how actively users interact with content while Churn Impact Score measures how much losing those users hurts retention. A higher engagement score indicates that users are more engaged with the content, while a higher churn impact score indicates that losing those users would have a greater negative impact on retention.")
+engagement_by_churn = fdf.groupby("churn_impact_score")["engagement_score"].mean().reset_index()
+st.subheader("Engagement Score by Churn Impact Score")  
+fig4 = px.line(engagement_by_churn, x="churn_impact_score", y="engagement_score", labels={"churn_impact_score": "Churn Impact Score", "engagement_score": "Engagement Score"}, title="Engagement Score by Churn Impact Score")
+st.plotly_chart(fig4)
+
+# Scatter plot of Engagement Score vs Churn Impact Score
+st.subheader("Engagement Score vs Churn Impact Score")
+st.write("This chart shows whether higher engagement reduces churn risk. A downward trend would suggest that more engaged viewers are less likely to churn.")
+
+fig5 = px.scatter(
+    fdf,
+    x="engagement_score",
+    y="churn_impact_score",
+    color="genre_group",
+    opacity=0.6,
+    labels={"engagement_score": "Engagement Score", "churn_impact_score": "Churn Impact Score"},
+    title="Engagement vs Churn Impact"
+)
+
+#Add a trend line
+x = fdf["engagement_score"].values
+y = fdf["churn_impact_score"].values
+if len(x) > 1:
+    m, b = np.polyfit(x, y, 1)
+    fig5.add_scatter(x=x, y=m*x+b, mode="lines", name="Trend", line=dict(color="black", dash="dot"))
+
+st.plotly_chart(fig5)
+
