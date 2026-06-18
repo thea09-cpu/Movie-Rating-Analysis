@@ -65,15 +65,15 @@ fig1 = px.bar(titles_by_genre, x=titles_by_genre.index, y=titles_by_genre.values
 st.plotly_chart(fig1)
 
 #Views by age group
-views_by_age_group = fdf.groupby("age_group")["views"].sum()
+views_by_age_group = fdf.groupby("age_group")["total_views"].sum()
 st.subheader("Views by Age Group")
 fig2 = px.bar(views_by_age_group, x=views_by_age_group.index, y=views_by_age_group.values, labels={"x": "Age Group", "y": "Views"}, title="Total Views by Age Group")
 st.plotly_chart(fig2)   
 
 #Views per genre category
-views_by_genre_age = fdf.groupby(["genre_group", "age_group"])["views"].sum().reset_index()
+views_by_genre_age = fdf.groupby(["genre_group", "age_group"])["total_views"].sum().reset_index()
 st.subheader("Views by Genre and Age Group")
-fig3 = px.bar(views_by_genre_age, x="genre_group", y="views", color="age_group", labels={"genre_group": "Genre", "views": "Views"}, title="Views by Genre and Age Group")
+fig3 = px.bar(views_by_genre_age, x="genre_group", y="total_views", color="age_group", labels={"genre_group": "Genre", "views": "Views"}, title="Views by Genre and Age Group")
 st.plotly_chart(fig3)
 
 #Engagement Score by Churn Rate
