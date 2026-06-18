@@ -103,7 +103,7 @@ x = scatter_df["engagement_score"].values
 y = scatter_df["churn_impact_score"].values
 if len(x) > 1:
     m, b = np.polyfit(x, y, 1)
-    fig5.add_scatter(x=x, y=m*x+b, mode="lines", name="Trend", line=dict(color="black", dash="dot"))
+    fig5.add_scatter(x=x, y=m*x+b, mode="lines", name="Trend", line=dict(color="emerald", dash="dot"))
 
 st.plotly_chart(fig5)
 
