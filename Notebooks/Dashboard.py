@@ -53,8 +53,8 @@ st.write("The data is based on a dataset of Netflix movies and their ratings acr
 total_movies = fdf.shape[0]
 st.subheader("Key Performance Indicators")
 st.metric("Total Movies", total_movies)
-st.metric("Average Completion Rate", f"{fdf['completion_rate'].mean():.2f}%")
-st.metric("Average Rating", f"{fdf['rating'].mean():.2f}/5")    
+st.metric("Average Completion Rate", f"{fdf['avg_completion_rate'].mean():.2f}%")
+st.metric("Average Rating", f"{fdf['imdb_rating'].mean():.2f}/5")    
 st.metric("Average Engagement Score", f"{fdf['engagement_score'].mean():.2f}/10")
 
 #Charts
