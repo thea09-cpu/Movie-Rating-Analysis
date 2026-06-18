@@ -18,6 +18,10 @@ Movie Rating Analysis includes an interactive Streamlit web app that explores an
 - 📈 Visualizations of rating distributions, trends, and genre comparisons  
 - 🖥️ Clear separation of raw vs cleaned datasets for reproducibility
 
+## Author
+Developed By Cynthia Mueni
+Github Profile Link: https://github.com/thea09-cpu
+
 ## Setup Instructions
 Clone the repository and install dependencies:
 
@@ -28,6 +32,3 @@ pip install -r requirements.txt
 
 ## Run the Streamlit App
 streamlit run Notebooks/Dashboard.py
-
-## Author
-Developed by Cynthia Mueni
