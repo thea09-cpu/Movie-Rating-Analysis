@@ -53,9 +53,9 @@ st.write("The data is based on a dataset of Netflix movies and their ratings acr
 total_movies = fdf.shape[0]
 st.subheader("Key Performance Indicators")
 st.metric("Total Movies", total_movies)
-st.metric("Average Completion Rate", f"{fdf['avg_completion_rate'].mean():.2f}%")
-st.metric("Average Rating", f"{fdf['imdb_rating'].mean():.2f}/5")    
-st.metric("Average Engagement Score", f"{fdf['engagement_score'].mean():.2f}/10")
+st.metric("Average Completion Rate", f"{fdf['avg_completion_rate'].mean():.2f}")
+st.metric("Average Rating", f"{fdf['imdb_rating'].mean():.2f}/10")    
+st.metric("Average Engagement Score", f"{fdf['engagement_score'].mean():.2f}/100 ")
 
 #Charts
 #Titles by genre
@@ -86,9 +86,10 @@ st.plotly_chart(fig4)
 # Scatter plot of Engagement Score vs Churn Impact Score
 st.subheader("Engagement Score vs Churn Impact Score")
 st.write("This chart shows whether higher engagement reduces churn risk. A downward trend would suggest that more engaged viewers are less likely to churn.")
-
+scatter_genre = st.selectbox("Select Genre for Scatter Plot", options=fdf["genre_group"].unique())
+scatter_df = fdf[fdf["genre_group"] == scatter_genre]
 fig5 = px.scatter(
-    fdf,
+    scatter_df,
     x="engagement_score",
     y="churn_impact_score",
     color="genre_group",
@@ -98,8 +99,8 @@ fig5 = px.scatter(
 )
 
 #Add a trend line
-x = fdf["engagement_score"].values
-y = fdf["churn_impact_score"].values
+x = scatter_df["engagement_score"].values
+y = scatter_df["churn_impact_score"].values
 if len(x) > 1:
     m, b = np.polyfit(x, y, 1)
     fig5.add_scatter(x=x, y=m*x+b, mode="lines", name="Trend", line=dict(color="black", dash="dot"))
